@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inferno: Moral Acoustics — Acoustic Topography Map</title>
+    <!-- 
+        INSTRUCTIONS:
+        1. Save your Inferno topography image in the same directory as this HTML file
+        2. Update the background-image URL in the .hell-funnel CSS (line 65) to match your image filename
+           Example: if your image is named "dante_inferno.jpg", change url('inferno_map.jpg') to url('dante_inferno.jpg')
+        3. Label positions are set based on the Inferno structure:
+           - Circle V: Styx (Layer 4 - reddish-brown muddy section)
+           - Malebolge IV-X (Layers 5-7 - fiery region, positioned sequentially)
+           - Giants' Ring (Layer 8 - dark rocky transition)
+           - Cocytus (Layers 9-10 - icy blue frozen bottom)
+        4. Fine-tune label positions by adjusting the 'top' percentage values in the CSS if needed
+    -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(180deg, #1a0a0a 0%, #0a0505 50%, #000000 100%);
+            color: #e8e8e8;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            padding: 2rem 1rem;
+            background: rgba(0, 0, 0, 0.7);
+            border-bottom: 2px solid #8b4513;
+            max-width: 60%;
+            margin: 0 auto;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #d4af37;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            color: #c0c0c0;
+            font-style: italic;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .side-panel {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            position: relative;
+        }
+
+        .side-panel-left {
+            border-right: 2px solid #8b4513;
+            padding-right: 2rem;
+        }
+
+        .side-panel-right {
+            border-left: 2px solid #8b4513;
+            padding-left: 2rem;
+        }
+
+        .decorative-quote {
+            color: #d4af37;
+            font-size: 0.9rem;
+            font-style: italic;
+            text-align: center;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+            max-width: 180px;
+        }
+
+        .decorative-quote::before {
+            content: '"';
+            font-size: 2rem;
+            color: #8b4513;
+            opacity: 0.6;
+        }
+
+        .decorative-quote::after {
+            content: '"';
+            font-size: 2rem;
+            color: #8b4513;
+            opacity: 0.6;
+        }
+
+        .decorative-element {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #8b4513, #d4af37, #8b4513, transparent);
+            margin: 1.5rem 0;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .flame-decoration {
+            width: 60px;
+            height: 120px;
+            margin: 1rem 0;
+            position: relative;
+            opacity: 0.4;
+        }
+
+        .flame-decoration::before,
+        .flame-decoration::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #d4af37 0%, #8b4513 40%, transparent 70%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            animation: flicker 3s ease-in-out infinite;
+        }
+
+        .flame-decoration::after {
+            animation-delay: 1.5s;
+            opacity: 0.6;
+        }
+
+        @keyframes flicker {
+            0%, 100% { transform: scaleY(1) scaleX(1); opacity: 0.4; }
+            25% { transform: scaleY(1.1) scaleX(0.95); opacity: 0.5; }
+            50% { transform: scaleY(0.95) scaleX(1.05); opacity: 0.45; }
+            75% { transform: scaleY(1.05) scaleX(0.98); opacity: 0.5; }
+        }
+
+        .hell-funnel {
+            position: relative;
+            flex: 1;
+            height: 90vh;
+            margin: 2rem auto;
+            min-height: 700px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+        }
+
+        .image-border {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border: 4px solid transparent;
+            border-image: linear-gradient(45deg, #8b4513, #d4af37, #8b4513, #d4af37, #8b4513) 1;
+            border-radius: 8px;
+            box-shadow: 
+                0 0 30px rgba(139, 69, 19, 0.5),
+                inset 0 0 30px rgba(212, 175, 55, 0.1);
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        .image-border::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            box-shadow: inset 0 0 20px rgba(212, 175, 55, 0.2);
+        }
+
+        .corner-decoration {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #d4af37;
+            opacity: 0.6;
+        }
+
+        .corner-decoration.top-left {
+            top: 10px;
+            left: 10px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.top-right {
+            top: 10px;
+            right: 10px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: 10px;
+            left: 10px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: 10px;
+            right: 10px;
+            border-left: none;
+            border-top: none;
+        }
+
+        .inferno-image {
+            width: 104.17%;
+            height: 100%;
+            object-fit: fill;
+            object-position: right center;
+            position: absolute;
+            top: 0;
+            right: -4%;
+            left: auto;
+            z-index: 1;
+            clip-path: inset(0 4% 0 0);
+        }
+
+        /* Fallback message if image doesn't load */
+        .image-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #d4af37;
+            font-size: 1.2rem;
+            text-align: center;
+            z-index: 0;
+            padding: 2rem;
+            border: 2px dashed #d4af37;
+            border-radius: 10px;
+            background: rgba(0, 0, 0, 0.7);
+        }
+
+        /* Labels - positioned above the image, sized to fit within circles */
+        .section-label {
+            position: absolute;
+            color: #d4af37;
+            font-size: 0.75rem;
+            font-weight: bold;
+            text-shadow: 
+                1px 1px 3px rgba(0, 0, 0, 1),
+                0 0 8px rgba(212, 175, 55, 0.6),
+                0 0 12px rgba(212, 175, 55, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            padding: 0.25rem 0.5rem;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.9) 0%, rgba(20, 10, 0, 0.95) 100%);
+            border: 2px solid #d4af37;
+            border-radius: 6px;
+            text-align: center;
+            white-space: nowrap;
+            box-shadow: 
+                0 0 10px rgba(212, 175, 55, 0.4),
+                inset 0 0 5px rgba(212, 175, 55, 0.1);
+            line-height: 1.2;
+            max-width: 90%;
+        }
+        
+        /* Allow wrapping for longer labels */
+        .section-label br {
+            display: block;
+        }
+
+        /* Giants' Ring - 15% smaller */
+        .label-giants {
+            font-size: 0.6375rem;
+            padding: 0.2125rem 0.425rem;
+            max-width: 76.5%;
+        }
+
+        /* Malebolge labels - smaller to fit side by side */
+        .label-malebolge-iv,
+        .label-malebolge-vi,
+        .label-malebolge-vii,
+        .label-malebolge-viii,
+        .label-malebolge-x {
+            font-size: 0.6rem;
+            padding: 0.15rem 0.3rem;
+            max-width: 10%;
+        }
+
+        /* Malebolge VI - 10% smaller */
+        .label-malebolge-vi {
+            font-size: 0.54rem;
+            padding: 0.135rem 0.27rem;
+            max-width: 9%;
+        }
+
+        /* Malebolge IV, VII, X - 10% smaller */
+        .label-malebolge-iv,
+        .label-malebolge-vii,
+        .label-malebolge-x {
+            font-size: 0.54rem;
+            padding: 0.135rem 0.27rem;
+            max-width: 9%;
+        }
+
+        /* Fraudulent Counsel needs more width */
+        .label-malebolge-viii {
+            max-width: 12.6%;
+            white-space: normal;
+            line-height: 1.1;
+            font-size: 0.54rem;
+            padding: 0.135rem 0.27rem;
+        }
+
+        .section-label:hover {
+            transform: scale(1.1) translateY(-1px);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.25) 0%, rgba(139, 69, 19, 0.3) 100%);
+            box-shadow: 
+                0 0 15px rgba(212, 175, 55, 0.7),
+                0 2px 8px rgba(0, 0, 0, 0.6),
+                inset 0 0 8px rgba(212, 175, 55, 0.2);
+            border-color: #ffd700;
+            font-size: 0.8rem;
+        }
+
+        /* Position labels based on the exact Inferno structure in your image */
+        /* Circle V: Styx - reddish-brown muddy water, centered around 27% */
+        .label-styx {
+            top: 32%;
+            left: 48.5%;
+            transform: translateX(-50%);
+        }
+
+        /* Malebolge labels - stacked in two rows within Circle 8 */
+        /* Top row: IV, VI, VII (in numerical order) */
+        /* Bottom row: VIII, X */
+        .label-malebolge-iv {
+            top: 61.5%;
+            left: 47%;
+            transform: translateX(-50%);
+        }
+
+        .label-malebolge-vi {
+            top: 65%;
+            left: 40%;
+            transform: translateX(-50%);
+        }
+
+        .label-malebolge-vii {
+            top: 66.5%;
+            left: 54.5%;
+            transform: translateX(-50%);
+        }
+
+        .label-malebolge-viii {
+            top: 69%;
+            left: 45.5%;
+            transform: translateX(-50%);
+        }
+
+        .label-malebolge-x {
+            top: 72%;
+            left: 55%;
+            transform: translateX(-50%);
+        }
+
+        /* Giants' Ring - dark rocky transition with colossal figures, centered around 75% */
+        .label-giants {
+            top: 76%;
+            left: 47.5%;
+            transform: translateX(-50%);
+        }
+
+        /* Cocytus - icy blue frozen lake at bottom, centered around 88% */
+        .label-cocytus {
+            top: 86%;
+            left: 47.5%;
+            transform: translateX(-50%);
+        }
+
+        /* Panel drawer */
+        .panel-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .panel-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .panel {
+            background: linear-gradient(180deg, #2a1a1a 0%, #1a0a0a 100%);
+            border: 3px solid #d4af37;
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 800px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 0 40px rgba(212, 175, 55, 0.4);
+            position: relative;
+            animation: slideUp 0.4s ease;
+            pointer-events: auto;
+            z-index: 1001;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .panel-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #8b4513;
+            color: #d4af37;
+            border: 2px solid #d4af37;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .panel-close:hover {
+            background: #d4af37;
+            color: #1a0a0a;
+            transform: rotate(90deg);
+        }
+
+        .panel h2 {
+            color: #d4af37;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #8b4513;
+            padding-bottom: 0.5rem;
+        }
+
+        .panel h3 {
+            color: #c0c0c0;
+            font-size: 1.3rem;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .panel p {
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            color: #e8e8e8;
+            font-size: 1.05rem;
+        }
+
+        .panel .quote {
+            font-style: italic;
+            color: #d4af37;
+            border-left: 4px solid #8b4513;
+            padding-left: 1rem;
+            margin: 1rem 0;
+        }
+
+        .audio-player {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 8px;
+            border: 1px solid #8b4513;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            margin-top: 0.5rem;
+            pointer-events: auto;
+            z-index: 1001;
+        }
+
+        .audio-note {
+            font-size: 0.9rem;
+            color: #c0c0c0;
+            font-style: italic;
+            margin-top: 0.5rem;
+        }
+
+        /* Scrollbar styling */
+        .panel::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .panel::-webkit-scrollbar-track {
+            background: #1a0a0a;
+        }
+
+        .panel::-webkit-scrollbar-thumb {
+            background: #8b4513;
+            border-radius: 5px;
+        }
+
+        .panel::-webkit-scrollbar-thumb:hover {
+            background: #d4af37;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .side-panel {
+                flex: 0 0 150px;
+            }
+
+            .decorative-quote {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .side-panel {
+                flex: 0 0 auto;
+                width: 100%;
+                border: none;
+                border-top: 2px solid #8b4513;
+                border-bottom: 2px solid #8b4513;
+                padding: 1rem;
+            }
+
+            .side-panel-left {
+                border-right: none;
+                padding-right: 1rem;
+            }
+
+            .side-panel-right {
+                border-left: none;
+                padding-left: 1rem;
+            }
+
+            .flame-decoration {
+                width: 40px;
+                height: 80px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-label {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.4rem;
+            }
+
+            .panel {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Ensure labels don't overflow on smaller images */
+        @media (max-height: 800px) {
+            .section-label {
+                font-size: 0.65rem;
+                padding: 0.2rem 0.4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Inferno: Moral Acoustics</h1>
+        <p>An interactive acoustic mapping of select Circles and Bolgias of Dante's Inferno that unearths how sound becomes corrupted and inverted as sin deepens and as Dante progresses through hell, descending from the brawling noise of Styx to the speechless quiet of Cocytus.</p>
+    </div>
+
+        <div class="container">
+            <!-- Left Side Panel -->
+            <div class="side-panel side-panel-left">
+                <div class="flame-decoration"></div>
+                <div class="decorative-element"></div>
+                <div class="decorative-quote">
+                    "I had told him-jestingly-'I'd know enough to fly through air'; and he, with curiosity, but little sense" (Mandelbaum, Canto XXIX, 112-114). "recall how apt I was at aping nature" (Mandelbaum, Canto XXIX, 138). "whose alchemy could counterfeit fine metals" (Mandelbaum, Canto XXIX, 137).
+                </div>
+                <div class="decorative-element"></div>
+                <div class="flame-decoration"></div>
+            </div>
+
+            <!-- Main Image Container -->
+            <div class="hell-funnel">
+                <!-- Artistic Border -->
+                <div class="image-border">
+                    <div class="corner-decoration top-left"></div>
+                    <div class="corner-decoration top-right"></div>
+                    <div class="corner-decoration bottom-left"></div>
+                    <div class="corner-decoration bottom-right"></div>
+                </div>
+
+                <!-- Inferno Topography Image - Embedded as base64 -->
+                <!-- Image will be loaded here via JavaScript -->
+                <img id="infernoImage" alt="Dante's Inferno Topography Map" class="inferno-image" style="display: none;">
+                
+                <!-- Drag & Drop Image Converter -->
+                <div class="image-placeholder" id="imagePlaceholder">
+                    <p><strong>📷 Add Your Inferno Map Image</strong></p>
+                    <div style="border: 3px dashed #d4af37; border-radius: 10px; padding: 2rem; margin: 1rem 0; background: rgba(212, 175, 55, 0.05); cursor: pointer;" onclick="document.getElementById('imageUpload').click()">
+                        <p style="margin-bottom: 1rem;">📥 Drag and drop your image here, or click to select:</p>
+                        <input type="file" id="imageUpload" accept="image/*" style="display: none;">
+                        <button style="background: #d4af37; color: #1a0a0a; border: none; padding: 0.8rem 2rem; border-radius: 8px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#ffd700'" onmouseout="this.style.background='#d4af37'">Choose Image File</button>
+                        <p style="font-size: 0.9rem; margin-top: 1rem; color: #c0c0c0;">Supported: JPG, PNG, GIF, WebP</p>
+                    </div>
+                    <p style="font-size: 0.85rem; color: #888; margin-top: 1rem;">✨ The image will be saved in your browser and displayed automatically</p>
+                </div>
+                
+                <!-- Labels positioned over the image -->
+            <!-- Circle V: Styx -->
+            <div class="section-label label-styx" data-section="styx">Circle V: Styx<br>(Wrath & Sullenness)</div>
+
+            <!-- Malebolge IV: Diviners -->
+            <div class="section-label label-malebolge-iv" data-section="malebolge-iv">Malebolge IV<br>(Diviners)</div>
+
+            <!-- Malebolge VI: Hypocrites -->
+            <div class="section-label label-malebolge-vi" data-section="malebolge-vi">Malebolge VI<br>(Hypocrites)</div>
+
+            <!-- Malebolge VII: Thieves -->
+            <div class="section-label label-malebolge-vii" data-section="malebolge-vii">Malebolge VII<br>(Thieves)</div>
+
+            <!-- Malebolge VIII: Fraudulent Counsel -->
+            <div class="section-label label-malebolge-viii" data-section="malebolge-viii">Malebolge VIII<br>(Fraudulent Counsel)</div>
+
+            <!-- Malebolge X: Falsifiers -->
+            <div class="section-label label-malebolge-x" data-section="malebolge-x">Malebolge X<br>(Falsifiers)</div>
+
+            <!-- Giants' Ring -->
+            <div class="section-label label-giants" data-section="giants">Giants' Ring<br>(Nimrod & Babel)</div>
+
+            <!-- Cocytus -->
+            <div class="section-label label-cocytus" data-section="cocytus">Cocytus<br>(Treachery)</div>
+            </div>
+
+            <!-- Right Side Panel -->
+            <div class="side-panel side-panel-right">
+                <div class="flame-decoration"></div>
+                <div class="decorative-element"></div>
+                <div class="decorative-quote">
+                    "bore the mist of sluggishness in us" while alive, and now are "bitter in the blackened mud" rather than speaking clearly (Mandelbaum, Canto VII, 123-124).
+                </div>
+                <div class="decorative-element"></div>
+                <div class="decorative-quote" style="font-size: 0.8rem; margin-top: 1rem;">
+                    "the emperor of the despondent kingdom so towered from the ice" (Mandelbaum, Canto XXXIV, 28-29).
+                </div>
+                <div class="decorative-element"></div>
+                <div class="flame-decoration"></div>
+            </div>
+        </div>
+
+    <!-- Panel Overlay -->
+    <div class="panel-overlay" id="panelOverlay">
+        <div class="panel" id="panel">
+            <div class="panel-close" id="panelClose">&times;</div>
+            <div id="panelContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const sections = {
+            'styx': {
+                title: 'Circle V: Styx (Wrath & Sullenness)',
+                acousticAnalysis: `Anger is divided into two distinct audible forms in the Styx. The Wrathful fill the air with sound: the sound of splashing, blows, teeth tearing flesh, and back-and-forth curses at each other. The Sullen, by contrast, are submerged and choked, their voices creating a gurgling and muffled choking beneath the mud. Their inability to speak demonstrates a form of sound in itself. Dante watches the bodies of the sinners "struck" and "torn", hearing those submerged lament that they "bore the mist of sluggishness in us" while alive, and now are "bitter in the blackened mud" rather than speaking clearly (Mandelbaum, Canto VII, 123-124). Their <em>contrapasso</em> is acoustic, where anger transforms into an endless combat noise, while sullenness becomes denial and a damaged voice. The acoustic division mirrors the moral division, where both are failures of rightly ordered speech. However, as we descend through hell, sound becomes further corrupted and inverted, until it finally disappears in Cocytus. The gurgling and brawling of the Styx serves as the baseline from which the acoustic descent of hell begins.`,
+                siteFit: `In this track, anger is literally audible in two distinct periods. The first period consists of sharp, loud, and constant sounds that represent the brawling and curses of the Wrathful, specifically the sounds of splashing, blows, teeth tearing flesh, and back-and-forth curses at each other. The second period consists of the gurgling and muffled speech of the Sullen, whose speech is hindered from being submerged within the mud. The contrast between loud attacks and buried, choked sounds mirrors Dante's split between wrath and sulleness.`,
+                quote: `"bore the mist of sluggishness in us" while alive, and now are "bitter in the blackened mud" rather than speaking clearly (Mandelbaum, Canto VII, 123-124).`,
+                audioFile: 'wrath and sullenness.m4a',
+                audioNote: ''
+            },
+            'malebolge-iv': {
+                title: 'Malebolge IV: Diviners',
+                acousticAnalysis: `The diviner's punishment demonstrates twisted time, and with it, the logic of sound. Dante describes the sinners as having their "faces twisted toward their haunches," forcing them to walk forward while only seeing backwards (Mandelbaum, Canto XX, 13-15). Those who claimed to be able to see into the future now live turned towards the past, rendering their prophetic speech meaningless, where they merely see what lies behind. Pulling against the direction of motion, the sinners' breath and voices are like a line of music running backwards. This bolgia demonstrates that the desire to transcend human limits and pursue knowledge outside of God's bounds distorts one's vision and voice.`,
+                siteFit: `The sound of the diviners fits their unnatural posture, where their voices create sounds that seem to pull against the flow of time. The track resembles a prayer that is flipped in reverse, mirroring their distorted speech that is caused by their twisted faces. The inverted prayer demonstrates an outward reflection of their sins, where they now recognize that their previous desire to transcend human limits has been reversed, forcing them to view and speak in the opposite direction.`,
+                quote: `"faces twisted toward their haunches" (Mandelbaum, Canto XX, 13-15).`,
+                audioFile: 'diviners.m4a',
+                audioNote: ''
+            },
+            'malebolge-vi': {
+                title: 'Malebolge VI: Hypocrites',
+                acousticAnalysis: `The punishment of the Hypocrites turns the sinners' double life into a double-layered soundscape. From the surface, the sinners once embodied sounds of pageantry and piety through courteous speeches and refined language. Now, Dante describes them as wearing cloaks that are "gilded and dazzled" from the surface, but "all of lead, so heavy" inside (Mandelbaum, Canto XXIII, 64-65). From an acoustic perspective, this implies a bright, dignified, and ceremonial noise that is accompanied by strained breath and slow, dragging footsteps. Their <em>contrapasso</em> is both visual and acoustic: their internal struggles are concealed by external brilliance. Through exposing hypocrisy as a lie of sound and appearance, Dante teaches to distrust alluring surfaces, as the underlying substance can often be false and deceptive.`,
+                siteFit: `The sounds of the hypocrites demonstrate hypocrisy that is literally audible in two distinct layers. On the top layer, there is a bright, high-pitched, almost ceremonial sound. Beneath that, a deep, dull, and heavy tone is included that resembles dragging weight. The upper layer is the gilded surface of the cloaks, while the bass is the lead lining that creates exhaustion in each step.`,
+                quote: `"gilded and dazzled" from the surface, but "all of lead, so heavy" inside (Mandelbaum, Canto XXIII, 64-65).`,
+                audioFile: 'hypocrites.m4a',
+                audioNote: ''
+            },
+            'malebolge-vii': {
+                title: 'Malebolge VII: Thieves',
+                acousticAnalysis: `The bolgia encapsulating the thieves envisions identity as an unstable and erratic sound. Dante depicts serpents and bodies continually merging and separating, describing one who "gripped his belly…grappled his two arms…and stuck together and mixed their colors" (Mandelbaum, Canto XXV, 52-62). Once blurring the boundaries between one's own possessions and those of others, the thieves are now unable to maintain control of their own form. Acoustically, this is a soundscape in which the <em>contrapasso</em> destroys the self's steady "tone", with nothing remaining fixed and everything distorted and indistinguishable. For the thieves, for once taking what belonged to others, they lose what belongs to themselves: their recognizable voice.`,
+                siteFit: `In the track of the thieves, identity is unstable and indistinguishable. Voices of two sinners are demonstrated through the simultaneous singing of both, creating smeared and imperceptible lyrics that resemble the merging of the serpents and bodies, which render them both as one. Just as thieves blurred the boundaries between their possessions and those of others, the track blurs the song and sound of two different sinners.`,
+                quote: `"gripped his belly…grappled his two arms…and stuck together and mixed their colors" (Mandelbaum, Canto XXV, 52-62).`,
+                audioFile: 'thieves.m4a',
+                audioNote: ''
+            },
+            'malebolge-viii': {
+                title: 'Malebolge VIII: Fraudulent Counsel (Ulysses)',
+                acousticAnalysis: `Ulysses's punishment reduces his perilous eloquence into a trapped, pure sound. Dante describes the soul, enclosed in a "flame as if it were a tongue" whose fraudulent counsel led others to ruin (Mandelbaum, Canto XXVI, 88-89). In life, Ulysses urged his crew to "not deny experience of that which lies beyond the sun, and of the world that is unpeopled" through a powerful and persuasive speech (Mandelbaum, Canto XXVI, 115-117). The skillful rhetoric acts like a beautiful harmony in its captivation, but it disregards God's limits to humans and ends in a shipwreck. His <em>contrapasso</em> turns his persuasive voice inseparable from fire, where his words, which once harmed others, now burn in isolation as a small, insignificant flame. Through this, Dante reveals eloquence devoid of love to be, while acoustically alluring, spiritually deadly by the same means.`,
+                siteFit: `Resembling Ulysses, the track progresses from eloquent and powerful speech into faint, insignificant sounds that mirror small flames. It begins with assertive language that displays dominance and power, then gradually starts to distort and blur. By the end, the tune that once felt heroic is fully swallowed by a muffled texture that resembles destruction and death.`,
+                quote: `"flame as if it were a tongue" (Mandelbaum, Canto XXVI, 88-89) and "not deny experience of that which lies beyond the sun, and of the world that is unpeopled" (Mandelbaum, Canto XXVI, 115-117).`,
+                audioFile: 'fraudulent counsel.m4a',
+                audioNote: ''
+            },
+            'malebolge-x': {
+                title: 'Malebolge X: Falsifiers',
+                acousticAnalysis: `The Falsifiers' bolgia serves as a chorus of corrupted, distinct sounds. Dante depicts alchemists clawing at scabs, impersonators such as Gianii Schicchi raging and biting, counterfeiters like Master Adam swollen with dropsy, struggling to breathe, and having an insatiable thirst, and perjurers like Sinon who reeked of fever. Fitting to their sins, which disrupted substances, identities, money, and truth, their damaged and disfigured bodies are now loud records and reflections of the harm they committed. Their speech becomes raspy, panting, and bitter from their itching, thirst, and fever, creating a <em>contrapasso</em> acoustic effect. Noticing Dante's enjoyment of the discord between Sinon and Adam, Virgil teaches that even listening must be morally disciplined.`,
+                siteFit: `This piece is deliberately uncomfortable. The utilization of uneven, wheezing rhythms and random sounds evokes suffering, fever, and thirst in diseased bodies. Each of the sounds in the track resembles the alchemists clawing at their scabs, the impersonators raging and biting, the counterfeiters squealing from dropsy and thirst, and perjurers screaming from their fever. The goal is to resemble an environment that feels chaotic and overworked, not only due to the suffering but also the contamination by various types of fraud.`,
+                quote: `"I had told him-jestingly-'I'd know enough to fly through air'; and he, with curiosity, but little sense" (Mandelbaum, Canto XXIX, 112-114). "recall how apt I was at aping nature" (Mandelbaum, Canto XXIX, 138). "whose alchemy could counterfeit fine metals" (Mandelbaum, Canto XXIX, 137).`,
+                audioFile: 'falsifiers.m4a',
+                audioNote: ''
+            },
+            'giants': {
+                title: "Giants' Ring (Nimrod & Babel)",
+                acousticAnalysis: `At the ring of the Giants, language dissolves into brute noise. Tied to the sin of Babel, Nimrod yells, "Raphèl maì amècche, zabì almi," a meaningless phrase of words that Dante compares to a blaring horn regarding its harshness (Mandelbaum, Canto XXXI, 67). Nimrod embodies an immense figure that conveys power and strength, yet his voice has lost the ability for others, leading to his inability to communicate. The <em>contrapasso</em> is especially fitting to Babel: the pride that he sought to reach God and surpass the confines of human nature is a rapid and permanent fragmentation of speech. Acoustically, this serves as a major turning point in Dante's descent, where sound transitions from chaotic fighting to intelligible words, and ultimately Cocytus's near silence.`,
+                siteFit: `Resembling the Giant's ring, the track is focused on size and meaningless. Dominated by very low, slow pulses that represent the heavy footsteps of giants. The track also contains higher tones that sound like the intelligible speech of Nimrod. Ultimately, it reflects the <em>contrapasso</em> and setting of Babel, where powerful noise is coupled with a lack of meaning.`,
+                quote: `"Raphèl maì amècche, zabì almi" (Mandelbaum, Canto XXXI, 67).`,
+                audioFile: 'giants ring.m4a',
+                audioNote: ''
+            },
+            'cocytus': {
+                title: 'Cocytus (Treachery)',
+                acousticAnalysis: `The end of Hell's sound is Cocytus, where Traitors are frozen in a glassy lake, their eyes sealed with ice, their teeth chattering, and they progressively become unable to speak. Dante notices "the emperor of the despondent kingdom so towered from the ice," describing Lucifer, who flaps his wings to generate cold wind that keeps the lake frozen and everyone stagnant (Mandelbaum, Canto XXXIV, 28-29). Despite this, Lucifer himself is silent as he gnaws on the three worst traitors. Whereas earlier circles screamed, gurgled, and argued, treachery and betrayal have completely ceased dialogue here. The soundscape of the <em>contrapasso</em> depicts wind, cracking ice, and a dreadful, speechless stillness, reflecting the extent to which treachery is severe in God's eyes as it breaks all bonds of trust and means of communication.`,
+                siteFit: `For Cocytus, the sound is stripped to almost nothing. Everything that can be heard resembles a quiet, wind-like noise that suggests Lucifer's beating of his wings, which creates the freezing environment. This circle no longer encapsulates distinguishable speech, as this is the only track that does not imitate the sounds of the sinners.`,
+                quote: `"the emperor of the despondent kingdom so towered from the ice" (Mandelbaum, Canto XXXIV, 28-29).`,
+                audioFile: 'cocytus.m4a',
+                audioNote: ''
+            }
+        };
+
+        // Function to reverse audio playback for diviners
+        function reverseAudio(audioElement) {
+            let audioContext = null;
+            let source = null;
+            let reversedBuffer = null;
+            let isReversed = false;
+            let isPlaying = false;
+            let startTime = 0;
+            let pausedTime = 0;
+            let setupComplete = false;
+            
+            console.log('reverseAudio called for:', audioElement.src);
+            
+            // Wait for audio to be ready
+            const setupReverse = () => {
+                if (setupComplete) {
+                    console.log('Setup already complete, skipping...');
+                    return;
+                }
+                console.log('Setting up reverse audio...');
+                try {
+                    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                    
+                    // Function to decode audio
+                    const decodeAudio = (arrayBuffer) => {
+                        console.log('Decoding audio data...');
+                        return audioContext.decodeAudioData(arrayBuffer);
+                    };
+                    
+                    // Try fetch first, fallback to XMLHttpRequest for file:// URLs
+                    let audioPromise;
+                    if (audioElement.src.startsWith('file://') || audioElement.src.startsWith('http://localhost') || !audioElement.src.startsWith('http')) {
+                        // Use XMLHttpRequest for local files
+                        console.log('Using XMLHttpRequest for local file...');
+                        audioPromise = new Promise((resolve, reject) => {
+                            const xhr = new XMLHttpRequest();
+                            xhr.open('GET', audioElement.src, true);
+                            xhr.responseType = 'arraybuffer';
+                            xhr.onload = () => {
+                                if (xhr.status === 0 || xhr.status === 200) {
+                                    resolve(xhr.response);
+                                } else {
+                                    reject(new Error('Failed to load audio: ' + xhr.status));
+                                }
+                            };
+                            xhr.onerror = () => reject(new Error('Network error loading audio'));
+                            xhr.send();
+                        }).then(decodeAudio);
+                    } else {
+                        // Use fetch for remote files
+                        console.log('Using fetch for remote file...');
+                        audioPromise = fetch(audioElement.src)
+                            .then(response => {
+                                console.log('Audio fetch response:', response.status);
+                                if (!response.ok) {
+                                    throw new Error('Failed to fetch audio: ' + response.status);
+                                }
+                                return response.arrayBuffer();
+                            })
+                            .then(decodeAudio);
+                    }
+                    
+                    audioPromise.then(buffer => {
+                            console.log('Audio decoded, creating reversed buffer...');
+                            // Create reversed buffer
+                            reversedBuffer = audioContext.createBuffer(
+                                buffer.numberOfChannels,
+                                buffer.length,
+                                buffer.sampleRate
+                            );
+                            
+                            // Reverse each channel
+                            for (let channel = 0; channel < buffer.numberOfChannels; channel++) {
+                                const originalData = buffer.getChannelData(channel);
+                                const reversedData = reversedBuffer.getChannelData(channel);
+                                for (let i = 0; i < buffer.length; i++) {
+                                    reversedData[i] = originalData[buffer.length - 1 - i];
+                                }
+                            }
+                            
+                            isReversed = true;
+                            setupComplete = true;
+                            console.log('Reversed buffer created successfully');
+                            
+                            // Helper function to format time
+                            function formatTime(seconds) {
+                                const mins = Math.floor(seconds / 60);
+                                const secs = Math.floor(seconds % 60);
+                                return `${mins}:${secs.toString().padStart(2, '0')}`;
+                            }
+                            
+                            // Hide original audio controls and create custom controls
+                            audioElement.style.display = 'none';
+                            console.log('Original audio hidden, creating custom controls...');
+                            
+                            // Create custom reversed audio player
+                            const audioContainer = audioElement.parentElement;
+                            const customPlayer = document.createElement('div');
+                            const uniqueId = 'divinersPlayer_' + Date.now();
+                            customPlayer.innerHTML = `
+                                <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                                    <button id="${uniqueId}_playPause" style="background: #d4af37; color: #1a0a0a; border: none; padding: 0.5rem 1rem; border-radius: 4px; cursor: pointer; font-weight: bold;">Play</button>
+                                    <input type="range" id="${uniqueId}_seek" min="0" max="100" value="0" style="flex: 1; cursor: pointer;">
+                                    <span id="${uniqueId}_time" style="color: #c0c0c0; font-size: 0.9rem; min-width: 80px;">0:00 / ${formatTime(reversedBuffer.duration)}</span>
+                                </div>
+                            `;
+                            audioContainer.appendChild(customPlayer);
+                            
+                            const playPauseBtn = document.getElementById(uniqueId + '_playPause');
+                            const seekBar = document.getElementById(uniqueId + '_seek');
+                            const timeDisplay = document.getElementById(uniqueId + '_time');
+                            
+                            // Play/pause functionality
+                            playPauseBtn.addEventListener('click', () => {
+                                if (!isPlaying) {
+                                    // Play reversed audio
+                                    if (source) {
+                                        try { source.stop(); } catch(e) {}
+                                    }
+                                    
+                                    source = audioContext.createBufferSource();
+                                    source.buffer = reversedBuffer;
+                                    source.connect(audioContext.destination);
+                                    
+                                    const seekPercent = parseFloat(seekBar.value) / 100;
+                                    const seekTime = seekPercent * reversedBuffer.duration;
+                                    startTime = audioContext.currentTime - seekTime;
+                                    
+                                    source.start(0, seekTime);
+                                    isPlaying = true;
+                                    playPauseBtn.textContent = 'Pause';
+                                    
+                                    // Update seek bar
+                                    const updateProgress = () => {
+                                        if (isPlaying && source) {
+                                            const elapsed = audioContext.currentTime - startTime;
+                                            const progress = (elapsed / reversedBuffer.duration) * 100;
+                                            seekBar.value = progress;
+                                            timeDisplay.textContent = `${formatTime(elapsed)} / ${formatTime(reversedBuffer.duration)}`;
+                                            
+                                            if (elapsed < reversedBuffer.duration) {
+                                                requestAnimationFrame(updateProgress);
+                                            } else {
+                                                isPlaying = false;
+                                                playPauseBtn.textContent = 'Play';
+                                                seekBar.value = 100;
+                                            }
+                                        }
+                                    };
+                                    updateProgress();
+                                } else {
+                                    // Pause
+                                    if (source) {
+                                        pausedTime = audioContext.currentTime - startTime;
+                                        try { source.stop(); } catch(e) {}
+                                        source = null;
+                                    }
+                                    isPlaying = false;
+                                    playPauseBtn.textContent = 'Play';
+                                }
+                            });
+                            
+                            // Seek functionality
+                            seekBar.addEventListener('input', (e) => {
+                                if (source && isPlaying) {
+                                    const seekPercent = parseFloat(e.target.value) / 100;
+                                    const seekTime = seekPercent * reversedBuffer.duration;
+                                    
+                                    try { source.stop(); } catch(err) {}
+                                    source = audioContext.createBufferSource();
+                                    source.buffer = reversedBuffer;
+                                    source.connect(audioContext.destination);
+                                    startTime = audioContext.currentTime - seekTime;
+                                    source.start(0, seekTime);
+                                }
+                            });
+                        })
+                        .catch(err => {
+                            console.error('Error reversing audio:', err);
+                            audioElement.style.display = 'block';
+                        });
+                } catch (err) {
+                    console.error('Error creating audio context:', err);
+                    audioElement.style.display = 'block';
+                }
+            };
+            
+            // Try to set up immediately, or wait for audio to load
+            if (audioElement.readyState >= 2) {
+                console.log('Audio ready, setting up reverse immediately');
+                setupReverse();
+            } else {
+                console.log('Waiting for audio to load, readyState:', audioElement.readyState);
+                const trySetup = () => {
+                    if (!setupComplete) {
+                        setupReverse();
+                    }
+                };
+                audioElement.addEventListener('loadeddata', trySetup, { once: true });
+                audioElement.addEventListener('canplay', trySetup, { once: true });
+                audioElement.addEventListener('loadedmetadata', trySetup, { once: true });
+                // Also try after delays in case events don't fire
+                setTimeout(() => {
+                    if (!setupComplete && audioElement.src) {
+                        console.log('Timeout 500ms: setting up reverse audio');
+                        trySetup();
+                    }
+                }, 500);
+                setTimeout(() => {
+                    if (!setupComplete && audioElement.src) {
+                        console.log('Timeout 1000ms: setting up reverse audio');
+                        trySetup();
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Panel functionality
+        const labels = document.querySelectorAll('.section-label');
+        const overlay = document.getElementById('panelOverlay');
+        const panelContent = document.getElementById('panelContent');
+        const panelClose = document.getElementById('panelClose');
+
+        labels.forEach(label => {
+            label.addEventListener('click', () => {
+                const section = label.getAttribute('data-section');
+                const data = sections[section];
+                
+                panelContent.innerHTML = `
+                    <h2>${data.title}</h2>
+                    
+                    <h3>Acoustic Analysis</h3>
+                    <p>${data.acousticAnalysis}</p>
+                    
+                    <h3>Acoustic Evocation Analysis</h3>
+                    <p>${data.siteFit}</p>
+                    
+                    <div class="quote">${data.quote}</div>
+                    
+                    <div class="audio-player">
+                        <h3>Acoustic Evocation</h3>
+                        <audio controls preload="metadata" id="audioPlayer" src="${data.audioFile}" style="pointer-events: auto; z-index: 1001; width: 100%;">
+                            Your browser does not support the audio element.
+                        </audio>
+                        <div id="audioError" style="color: #d4af37; margin-top: 0.5rem; font-size: 0.9rem; display: none;"></div>
+                        ${data.audioNote ? `<div class="audio-note">${data.audioNote}</div>` : ''}
+                    </div>
+                `;
+                
+                overlay.classList.add('active');
+                
+                // Initialize audio after panel is shown
+                setTimeout(() => {
+                    const audioPlayer = document.getElementById('audioPlayer');
+                    const audioError = document.getElementById('audioError');
+                    if (audioPlayer) {
+                        audioPlayer.volume = 1.0;
+                        
+                        // Check if file exists and handle errors
+                        audioPlayer.addEventListener('error', (e) => {
+                            console.error('Audio error:', e, 'File:', data.audioFile);
+                            if (audioError) {
+                                audioError.style.display = 'block';
+                                audioError.textContent = `Unable to load audio file: ${data.audioFile}. Please ensure the file is in the same directory as this HTML file.`;
+                            }
+                        });
+                        
+                        audioPlayer.addEventListener('loadedmetadata', () => {
+                            console.log('Audio loaded successfully:', data.audioFile);
+                            if (audioError) {
+                                audioError.style.display = 'none';
+                            }
+                        });
+                        
+                        audioPlayer.addEventListener('canplay', () => {
+                            console.log('Audio can play:', data.audioFile);
+                        });
+                        
+                        // Reverse audio for diviners - call immediately
+                        if (section === 'malebolge-iv') {
+                            console.log('Diviners section detected, setting up reverse audio...');
+                            // Call reverseAudio immediately
+                            reverseAudio(audioPlayer);
+                        }
+                        
+                        // Try to load the audio
+                        audioPlayer.load();
+                    }
+                }, 100);
+            });
+        });
+
+        panelClose.addEventListener('click', () => {
+            overlay.classList.remove('active');
+        });
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                overlay.classList.remove('active');
+            }
+        });
+
+        // Image upload and base64 embedding
+        const imageUpload = document.getElementById('imageUpload');
+        const infernoImage = document.getElementById('infernoImage');
+        const imagePlaceholder = document.getElementById('imagePlaceholder');
+        const hellFunnel = document.querySelector('.hell-funnel');
+
+        // Embedded image file name - put your image file in the same directory as this HTML file
+        // Supported formats: JPG, PNG, GIF, WebP, AVIF
+        // Example: 'inferno_map.jpg' or 'dante_inferno.png'
+        const EMBEDDED_IMAGE_FILE = 'expanded_2.avif'; // Change this to your image filename, or leave empty to use drag & drop
+
+        // Try to load embedded image file first
+        if (EMBEDDED_IMAGE_FILE && EMBEDDED_IMAGE_FILE.trim() !== '') {
+            const testImage = new Image();
+            testImage.onload = () => {
+                infernoImage.src = EMBEDDED_IMAGE_FILE;
+                infernoImage.style.display = 'block';
+                imagePlaceholder.style.display = 'none';
+            };
+            testImage.onerror = () => {
+                console.log('Embedded image file not found:', EMBEDDED_IMAGE_FILE);
+                // Fall back to localStorage or placeholder
+                const storedImage = localStorage.getItem('infernoMapImage');
+                if (storedImage) {
+                    infernoImage.src = storedImage;
+                    infernoImage.style.display = 'block';
+                    imagePlaceholder.style.display = 'none';
+                }
+            };
+            testImage.src = EMBEDDED_IMAGE_FILE;
+        } else {
+            // Check if image is already stored in localStorage
+            const storedImage = localStorage.getItem('infernoMapImage');
+            if (storedImage) {
+                infernoImage.src = storedImage;
+                infernoImage.style.display = 'block';
+                imagePlaceholder.style.display = 'none';
+            }
+        }
+
+        // Handle file selection
+        imageUpload.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleImageFile(file);
+            }
+        });
+
+        // Handle drag and drop
+        hellFunnel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            hellFunnel.style.borderColor = '#d4af37';
+        });
+
+        hellFunnel.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            hellFunnel.style.borderColor = '';
+        });
+
+        hellFunnel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            hellFunnel.style.borderColor = '';
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleImageFile(file);
+            } else {
+                alert('Please drop an image file (JPG, PNG, GIF, or WebP)');
+            }
+        });
+
+        function handleImageFile(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const base64Image = e.target.result;
+                // Store in localStorage for persistence
+                localStorage.setItem('infernoMapImage', base64Image);
+                // Display the image
+                infernoImage.src = base64Image;
+                infernoImage.style.display = 'block';
+                imagePlaceholder.style.display = 'none';
+                
+                // Log the base64 to console so user can copy it for embedding
+                console.log('Image loaded! To embed this image permanently, copy the following base64 string:');
+                console.log(base64Image);
+                console.log('Then paste it into the EMBEDDED_IMAGE constant in the HTML file.');
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        // Helper function to get current image as base64 (for embedding)
+        // Call this in console: getEmbeddedImage()
+        window.getEmbeddedImage = function() {
+            const stored = localStorage.getItem('infernoMapImage');
+            if (stored) {
+                console.log('Copy this base64 string and paste it into EMBEDDED_IMAGE constant:');
+                console.log(stored);
+                return stored;
+            } else if (infernoImage.src && infernoImage.src.startsWith('data:')) {
+                console.log('Copy this base64 string and paste it into EMBEDDED_IMAGE constant:');
+                console.log(infernoImage.src);
+                return infernoImage.src;
+            } else {
+                console.log('No image found. Please load an image first.');
+                return null;
+            }
+        };
+    </script>
+</body>
+</html>
