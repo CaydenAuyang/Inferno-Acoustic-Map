@@ -12,4 +12,5 @@ An interactive acoustic mapping of select Circles and Bolgias of Dante's Inferno
 
 ## Usage
 
-Simply open `index.html` or `inferno_acoustic_map.html` in a web browser.
+Open https://github.com/CaydenAuyang/Inferno-Acoustic-Map in a web browser.
+If the environment is replicated, open `index.html` or `inferno_acoustic_map.html` in a web browser.
